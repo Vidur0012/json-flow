@@ -6,18 +6,9 @@ import '@xyflow/react/dist/style.css';
 import { InputWithButton } from './InputJson';
 import styles from './FlowPage.module.scss';
 import { getLayoutedElements } from "./utils/layoutUtil"
-
-import { ObjectNode } from "./nodes/ObjectNode";
-import { ArrayNode } from "./nodes/ArrayNode";
-import { PrimitiveNode } from "./nodes/PrimitiveNode";
 import { flatten } from './utils/flattener';
 import { toast } from 'react-toastify';
 
-// const nodeTypes = {
-//   object: ObjectNode,
-//   array: ArrayNode,
-//   primitive: PrimitiveNode,
-// };
 const getNodeStyle = (type) => {
     switch (type) {
         case 'object':
@@ -45,8 +36,8 @@ const getNodeStyle = (type) => {
 
 export default function App() {
     const [searchValue, setSearchValue] = useState("");
-    const [nodes, setNodes, onNodesChange] = useNodesState([]);
-    const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+    const [nodes, setNodes] = useNodesState([]);
+    const [edges, setEdges] = useEdgesState([]);
 
     useEffect(() => {
         const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
@@ -70,12 +61,11 @@ export default function App() {
             const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
                 nodes,
                 edges,
-                "TB" // Top-Bottom layout
+                "TB"
             );
 
             setNodes([...layoutedNodes.map(node => ({ ...node, style: getNodeStyle(node.type) }))]);
             setEdges([...layoutedEdges]);
-
         } catch (err) {
             toast.error("Invalid json...");
         }
@@ -106,7 +96,6 @@ export default function App() {
                             value={searchValue}
                             onChange={(e) => setSearchValue(e.target.value)}
                             className={styles.searchInput}
-                        // You can wire this to a handler if needed
                         />
                         <button type="button" className={styles.searchButton} onClick={handleSearch}>
                             Search
@@ -115,10 +104,7 @@ export default function App() {
                     <ReactFlow
                         nodes={nodes}
                         edges={edges}
-                        //   onNodesChange={onNodesChange}
-                        //   onEdgesChange={onEdgesChange}
                         onConnect={onConnect}
-                        //   nodeTypes={nodeTypes}
                         fitView
                     />
                 </div>
