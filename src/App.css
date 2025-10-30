@@ -40,3 +40,16 @@
 .read-the-docs {
   color: #888;
 }
+
+.react-flow__edges {
+  z-index: 1 !important;
+}
+
+.react-flow__nodes {
+  z-index: 2 !important;
+  pointer-events: none; /* Let edges show above, but still interactable */
+}
+
+.react-flow__node {
+  pointer-events: all; /* Allows nodes to still be clickable */
+}
