@@ -5,6 +5,7 @@ import { ReactFlow, addEdge, useNodesState, useEdgesState } from '@xyflow/react'
 import '@xyflow/react/dist/style.css';
 import { InputWithButton } from './InputJson';
 import styles from './FlowPage.module.scss';
+import { CustomNode } from './nodes/CustomNode';
 import { getLayoutedElements } from "./utils/layoutUtil"
 import { flatten } from './utils/flattener';
 import { toast } from 'react-toastify';
@@ -39,15 +40,15 @@ export default function App() {
     const [nodes, setNodes] = useNodesState([]);
     const [edges, setEdges] = useEdgesState([]);
 
-    useEffect(() => {
-        const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
-            nodes,
-            edges,
-            "TB" // Top-Bottom layout
-        );
-        setNodes([...layoutedNodes]);
-        setEdges([...layoutedEdges]);
-    }, []);
+    // useEffect(() => {
+    //     const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
+    //         nodes,
+    //         edges,
+    //         "TB" // Top-Bottom layout
+    //     );
+    //     setNodes([...layoutedNodes]);
+    //     setEdges([...layoutedEdges]);
+    // }, []);
 
     const onConnect = useCallback(
         (params) => setEdges((edgesSnapshot) => addEdge(params, edgesSnapshot)),
@@ -64,7 +65,14 @@ export default function App() {
                 "TB"
             );
 
-            setNodes([...layoutedNodes.map(node => ({ ...node, style: getNodeStyle(node.type) }))]);
+            setNodes([...layoutedNodes.map(node => ({ 
+              ...node, 
+              style: getNodeStyle(node.type),
+              data: { 
+                ...node.data,
+                tooltip: node.id
+              }
+            }))]);
             setEdges([...layoutedEdges]);
         } catch (err) {
             toast.error("Invalid json...");
@@ -105,6 +113,11 @@ export default function App() {
                         nodes={nodes}
                         edges={edges}
                         onConnect={onConnect}
+                        nodesDraggable={true}
+                        nodesConnectable={true}
+                        nodesFocusable={true}
+                        proOptions={{ hideAttribution: true }}
+                        nodeTypes={{ default: CustomNode }}
                         fitView
                     />
                 </div>
